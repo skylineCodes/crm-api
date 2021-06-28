@@ -1,7 +1,7 @@
 ## Steps to reproduce
 
 - Run git clone
-- On your local environment - Run docker-compose up -d - to build the project docker with docker compose images
+- On your local environment - Run docker-compose up -d - to build the project images with docker compose images
 - Run docker-compose exec crm_api bash to enter the api bash
 - Run php artisan migrate
 - Exit the bash
