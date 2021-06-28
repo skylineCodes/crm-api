@@ -4,7 +4,11 @@
 ```
 git clone https://github.com/skylineCodes/crm-api.git
 ```
-## On your local environment - Run 
+## On your local environment - Run
+```
+composer install
+```
+## Then run docker
 ```
 docker-compose up -d
 ```
