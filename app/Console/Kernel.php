@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\SendEmailJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -24,7 +25,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        date_default_timezone_set('Africa/Lagos');
+
+        // Send email reminder every three days
+        $schedule->job(new SendEmailJob)->cron('0 9 */3 * *');
+
+        // Quick test
+        // $schedule->job(new SendEmailJob)->cron('35 5 28 6 *');
     }
 
     /**

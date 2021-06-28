@@ -1,0 +1,69 @@
+version: "3"
+services: 
+    crm_api:
+        build: 
+            context: .
+        container_name: crm_api
+        volumes: 
+            - .:/usr/src/app
+        depends_on: 
+            - crm_maria_db
+        working_dir: /usr/src/app
+        environment: 
+            SERVICE_NAME: laravel
+            DB_CONNECTION: mysql
+            DB_DRIVER: mysql
+            DB_HOST: crm_maria_db
+            DB_PORT: 3306
+            DB_USERNAME: crm_user
+            DB_PASSWORD: crm_password
+            DB_DATABASE: crm
+            APP_KEY: base64:enpOQqtzWTZaW6YYNgze2wcZy2gSoqjJR9/bPy53h+I=
+            APP_DEBUG: 'true'
+            JWT_SECRET: yLGHEEOscVSaJWGIGuBn0In3ZR2uWtx4yBJMaQ28GlBDh0DMSYqn3wbWb453Ame8
+            JWT_TTL: 3000
+            QUEUE_CONNECTION: database
+            MAIL_MAILER: mailgun
+            MAILGUN_DOMAIN: mail.medikal.io
+            MAILGUN_SECRET: key-98872ebbc8415d3e1841a0b171a7fa2c
+        networks: 
+            - app_network
+    
+    crm_nginx:
+        build: 
+            context: ./docker-nginx/.
+        container_name: crm_nginx
+        volumes: 
+            - "./public:/usr/src/app/public"
+        environment: 
+            NGINX_FPM_HOST: crm_api
+            NGINX_ROOT: /usr/src/app/public
+        ports: 
+            - "8001:80"
+        depends_on: 
+            - crm_api
+        networks: 
+            - app_network
+    
+    crm_maria_db:
+        image: mariadb
+        restart: always
+        container_name: crm_maria_db
+        environment: 
+            MYSQL_DATABASE: crm
+            MYSQL_ROOT_PASSWORD: crm_password
+            MYSQL_USER: crm_user
+            MYSQL_PASSWORD: crm_password
+        ports: 
+            - "3306:3306"
+        volumes: 
+            - "./storage/db-data:/var/lib/mysql"
+        networks: 
+            - app_network
+            
+networks: 
+    app_network:
+        driver: bridge          
+        
+volumes: 
+    mongodata:

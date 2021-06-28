@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Clients;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Clients\ClientsResource;
+use App\Mail\SendMail;
 use App\Models\Clients\Client;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ClientsController extends Controller
 {
@@ -61,7 +63,7 @@ class ClientsController extends Controller
                 'email' => 'required|email|unique:clients,email',
                 'primary_legal_counsel' => 'required|string',
                 'date_of_birth' => 'required|date_format:Y/m/d',
-                'case_details' => 'string'
+                'case_details' => 'string|nullable'
             ]);
 
             if ($validator->fails()) {
@@ -78,6 +80,9 @@ class ClientsController extends Controller
                 'date_of_birth' => $request->date_of_birth,
                 'case_details' => $request->case_details,
             ]);
+
+            // Send email to client
+            Mail::to($client->email)->send(new SendMail());
 
             $response = response()->json([
                 'status' => 201,
